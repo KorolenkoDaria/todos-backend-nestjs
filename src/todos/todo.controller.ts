@@ -1,20 +1,21 @@
-import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
-import { TodoService } from './todo.service';
-import { Todo } from './schemas/todo.schema';
+import { Controller, Get, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { TodosService } from './todo.service';
+import { Todo } from '../schemas/todo.schema';
+import { createTodoDto } from './dto/createTodo.dto'
 
 @Controller('todos')
-export class TodoController {
-    private readonly logger = new Logger(TodoController.name);
-    constructor(private readonly todoService: TodoService) { }
+export class TodosController {
+    constructor(private todosService: TodosService) { }
 
     @Post()
-    async create(@Body() createTodoDto: { title: string, completed: boolean }): Promise<Todo> {
-        this.logger.log('Creating a new todo');
-        return this.todoService.create(createTodoDto);
+    @UsePipes(new ValidationPipe)
+    createTodo(@Body() createTodoDto: createTodoDto) {
+        console.log(createTodoDto);
+        return this.todosService.createTodo(createTodoDto);
     }
 
     @Get()
     async findAll(): Promise<Todo[]> {
-        return this.todoService.findAll();
+        return this.todosService.findAll();
     }
 }
