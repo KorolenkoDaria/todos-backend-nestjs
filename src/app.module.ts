@@ -1,11 +1,15 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { Module } from "@nestjs/common";
-/* import { AppController } from "./app.controller";
-import { AppService } from "./app.service"; */
 import { MongooseModule } from '@nestjs/mongoose';
-import { TodoModule } from './todos/todo.module'
+import { TodoModule } from './todos/todo.module';
+
+const { DB_HOST } = process.env;
+
 @Module({
     imports: [
-        MongooseModule.forRoot('mongodb+srv://Korolenko:l3iguC2LCPOUXNw2@cluster0.w3zl1n3.mongodb.net/db-todos?retryWrites=true&w=majority'),
+        MongooseModule.forRoot(DB_HOST),
         TodoModule
     ],
     controllers: [],
