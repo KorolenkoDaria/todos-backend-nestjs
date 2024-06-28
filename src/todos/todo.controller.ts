@@ -3,7 +3,7 @@ import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, P
 import { TodosService } from './todo.service';
 import { Todo } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
-import { UpdateTodoDto } from './dto/UpdateTodo.dto'
+import { UpdateTodoDto } from './dto/UpdateTodo.dto';
 
 @Controller('todos')
 export class TodosController {
