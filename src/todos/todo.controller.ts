@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { TodosService } from './todo.service';
 import { Todo } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
@@ -12,7 +12,6 @@ export class TodosController {
     @Post()
     @UsePipes(new ValidationPipe)
     async createTodo(@Body() createTodoDto: CreateTodoDto) {
-        console.log(createTodoDto);
         return this.todosService.createTodo(createTodoDto);
     }
 
@@ -28,19 +27,19 @@ export class TodosController {
         if (!isValid) throw new HttpException('Invalid ID', 400);
         const deleteTodo = await this.todosService.deleteTodo(id);
         if (!deleteTodo) throw new HttpException('The task Not Found', 404);
-        return { message: "The task deleted successfully!" };
+        return deleteTodo;
     }
 
-    @Patch(':id')
-    @UsePipes(new ValidationPipe())
-    async updateTodo(
-        @Param('id') id: string,
-        @Body() updateTodoDto: UpdateTodoDto) {
+    @Patch(':id/toggle')
+    async toggleTodoStatus(@Param('id') id: string): Promise<Todo> {
         const isValid = mongoose.Types.ObjectId.isValid(id);
-        if (!isValid) throw new HttpException('Invalid ID', 400);
-
-        const updatedTodo = await this.todosService.updateTodo(id, updateTodoDto);
-        if (!updatedTodo) throw new HttpException('User Not Found', 404);
+        if (!isValid) {
+            throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+        }
+        const updatedTodo = await this.todosService.toggleTodoStatus(id);
+        if (!updatedTodo) {
+            throw new HttpException('Todo not found', HttpStatus.NOT_FOUND);
+        }
         return updatedTodo;
     }
 
