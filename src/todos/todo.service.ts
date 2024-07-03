@@ -31,7 +31,11 @@ export class TodosService {
         return todo.save();
     }
     async updateTodo(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo | null> {
-        const todo = await this.todoModel.findByIdAndUpdate(id, updateTodoDto, { new: true }).exec()
+        const todo = await this.todoModel.findOneAndUpdate(
+            { _id: id },
+            { title: updateTodoDto.editTitle },
+            { new: true }
+        ).exec();
         if (!todo) {
             throw new HttpException('Todo not found', HttpStatus.NOT_FOUND);
         }
