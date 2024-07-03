@@ -9,17 +9,17 @@ import { UpdateTodoDto } from './dto/UpdateTodo.dto';
 export class TodosService {
     constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) { }
 
-    createTodo(createTodoDto: CreateTodoDto): Promise<Todo> {
-        const newTodo = new this.todoModel(createTodoDto);
+    async createTodo(createTodoDto: CreateTodoDto): Promise<Todo> {
+        const newTodo = await new this.todoModel(createTodoDto);
         return newTodo.save();
     }
 
-    getsTodos(): Promise<Todo[]> {
-        return this.todoModel.find().exec();
+    async getsTodos(): Promise<Todo[]> {
+        return await this.todoModel.find().exec();
     }
 
-    deleteTodo(id: string) {
-        return this.todoModel.findByIdAndDelete(id).exec();
+    async deleteTodo(id: string) {
+        return await this.todoModel.findByIdAndDelete(id).exec();
     }
 
     async toggleTodoStatus(id: string): Promise<Todo | null> {
@@ -29,6 +29,13 @@ export class TodosService {
         }
         todo.completed = !todo.completed;
         return todo.save();
+    }
+    async updateTodo(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo | null> {
+        const todo = await this.todoModel.findByIdAndUpdate(id, updateTodoDto, { new: true }).exec()
+        if (!todo) {
+            throw new HttpException('Todo not found', HttpStatus.NOT_FOUND);
+        }
+        return todo;
     }
 }
 

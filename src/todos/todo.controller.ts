@@ -36,7 +36,19 @@ export class TodosController {
         if (!isValid) {
             throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
         }
-        const updatedTodo = await this.todosService.toggleTodoStatus(id);
+        const toggledTodo = await this.todosService.toggleTodoStatus(id);
+        if (!toggledTodo) {
+            throw new HttpException('Todo not found', HttpStatus.NOT_FOUND);
+        }
+        return toggledTodo;
+    }
+    @Patch(':id')
+    async updatedTodo(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto): Promise<Todo> {
+        const isValid = mongoose.Types.ObjectId.isValid(id);
+        if (!isValid) {
+            throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+        }
+        const updatedTodo = await this.todosService.updateTodo(id, updateTodoDto);
         if (!updatedTodo) {
             throw new HttpException('Todo not found', HttpStatus.NOT_FOUND);
         }
