@@ -10,6 +10,9 @@ export class Todo {
 
     @Prop({ default: false })
     completed: boolean;
+
+    @Prop({ required: true })
+    addedDate: string;
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo);
