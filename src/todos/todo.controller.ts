@@ -1,18 +1,22 @@
 import mongoose from 'mongoose';
-import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
 import { TodosService } from './todo.service';
 import { Todo } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
 import { UpdateTodoDto } from './dto/UpdateTodo.dto';
+import { AuthGuard } from '../users/user.guard';
 
 @Controller('todos')
 export class TodosController {
     constructor(private todosService: TodosService) { }
 
+    @UseGuards(AuthGuard)
     @Post()
     @UsePipes(new ValidationPipe)
-    async createTodo(@Body() createTodoDto: CreateTodoDto) {
-        return this.todosService.createTodo(createTodoDto);
+    async createTodo(@Body() createTodoDto: CreateTodoDto, @Request() req) {
+        console.log(createTodoDto);
+        const userId = req.user.sub;
+        return this.todosService.createTodo(createTodoDto, userId);
     }
 
     @Get()

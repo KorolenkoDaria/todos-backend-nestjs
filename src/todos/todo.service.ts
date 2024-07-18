@@ -9,8 +9,8 @@ import { UpdateTodoDto } from './dto/UpdateTodo.dto';
 export class TodosService {
     constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) { }
 
-    async createTodo(createTodoDto: CreateTodoDto): Promise<Todo> {
-        const newTodo = await new this.todoModel(createTodoDto);
+    async createTodo(createTodoDto: CreateTodoDto, userId: string): Promise<Todo> {
+        const newTodo = await new this.todoModel({ ...createTodoDto, owner: userId });
         return newTodo.save();
     }
 
