@@ -14,8 +14,8 @@ export class TodosService {
         return newTodo.save();
     }
 
-    async getsTodos(): Promise<Todo[]> {
-        return await this.todoModel.find().exec();
+    async getsTodos(userId: string): Promise<Todo[]> {
+        return await this.todoModel.find({ owner: userId }).exec();
     }
 
     async deleteTodo(id: string) {

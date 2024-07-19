@@ -14,14 +14,14 @@ export class TodosController {
     @Post()
     @UsePipes(new ValidationPipe)
     async createTodo(@Body() createTodoDto: CreateTodoDto, @Request() req) {
-        console.log(createTodoDto);
         const userId = req.user.sub;
         return this.todosService.createTodo(createTodoDto, userId);
     }
-
+    @UseGuards(AuthGuard)
     @Get()
-    async find(): Promise<Todo[]> {
-        return this.todosService.getsTodos();
+    async find(_, @Request() req): Promise<Todo[]> {
+        const userId = req.user.sub;
+        return this.todosService.getsTodos(userId);
     }
 
     @Delete(':id')
