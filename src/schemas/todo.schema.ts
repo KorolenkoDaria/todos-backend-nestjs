@@ -16,6 +16,9 @@ export class Todo {
     @Prop({ required: true })
     addedDate: string;
 
+    @Prop({ enum: [0, 1, 2, 3] })
+    priority: number;
+
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     owner: User;
 }

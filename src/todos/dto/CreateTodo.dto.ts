@@ -12,5 +12,9 @@ export class CreateTodoDto {
     @IsNotEmpty()
     @IsString()
     @IsCustomDateFormat('DD-MM-YYYY', { message: 'Date must be in the format DD-MM-YYYY' })
-    addedDate: string
+    addedDate: string;
+
+    @IsNotEmpty()
+    @IsString()
+    priority: string;
 }
