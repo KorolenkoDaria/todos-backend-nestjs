@@ -4,10 +4,12 @@ import { Model } from 'mongoose';
 import { Todo, TodoDocument } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
 import { UpdateTodoDto } from './dto/UpdateTodo.dto';
+import priorities from '../helpers/priorities';
 
 @Injectable()
 export class TodosService {
-    constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) { }
+    constructor(
+        @InjectModel(Todo.name) private todoModel: Model<TodoDocument>) { }
 
     async createTodo(createTodoDto: CreateTodoDto, userId: string): Promise<Todo> {
         const newTodo = await new this.todoModel({ ...createTodoDto, owner: userId });
@@ -15,7 +17,14 @@ export class TodosService {
     }
 
     async getsTodos(userId: string): Promise<Todo[]> {
-        return await this.todoModel.find({ owner: userId }).exec();
+        const todos = await this.todoModel.find({ owner: userId }).exec();
+        const result = todos.map(todo => {
+            return {
+                ...todo.toObject(),
+                priority: priorities[todo.priority]
+            };
+        });
+        return result;
     }
 
     async deleteTodo(id: string) {

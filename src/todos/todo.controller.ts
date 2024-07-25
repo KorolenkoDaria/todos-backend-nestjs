@@ -21,7 +21,8 @@ export class TodosController {
     @Get()
     async find(_, @Request() req): Promise<Todo[]> {
         const userId = req.user.sub;
-        return this.todosService.getsTodos(userId);
+        const todos = await this.todosService.getsTodos(userId);
+        return todos
     }
 
     @Delete(':id')
