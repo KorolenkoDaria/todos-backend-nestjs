@@ -16,8 +16,9 @@ export class TodosService {
         return newTodo.save();
     }
 
-    async getsTodos(userId: string): Promise<Todo[]> {
-        const todos = await this.todoModel.find({ owner: userId }).exec();
+    async getsTodos(criteria: string, userId: string): Promise<Todo[]> {
+        console.log(criteria);
+        const todos = await this.todoModel.find({ owner: userId }).sort({ [criteria]: 1 }).exec();
         const result = todos.map(todo => {
             return {
                 ...todo.toObject(),

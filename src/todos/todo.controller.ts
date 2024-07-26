@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
-import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { Controller, Query, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
 import { TodosService } from './todo.service';
 import { Todo } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
 import { UpdateTodoDto } from './dto/UpdateTodo.dto';
+import { CriteriaTodosDto } from './dto/CriteriaTodos.dto';
 import { AuthGuard } from '../users/user.guard';
 
 @Controller('todos')
@@ -19,9 +20,10 @@ export class TodosController {
     }
     @UseGuards(AuthGuard)
     @Get()
-    async find(_, @Request() req): Promise<Todo[]> {
+    async find(@Query() criteriaTodosDto: CriteriaTodosDto, @Request() req): Promise<Todo[]> {
         const userId = req.user.sub;
-        const todos = await this.todosService.getsTodos(userId);
+        const { criteria } = criteriaTodosDto
+        const todos = await this.todosService.getsTodos(criteria, userId);
         return todos
     }
 
