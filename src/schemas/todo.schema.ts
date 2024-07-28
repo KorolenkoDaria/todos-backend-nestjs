@@ -14,7 +14,10 @@ export class Todo {
     completed: boolean;
 
     @Prop({ required: true })
-    addedDate: string;
+    addDate: string;
+
+    @Prop({ required: true })
+    updateDate: string;
 
     @Prop({ enum: ["0", "1", "2", "3"] })
     priority: string;

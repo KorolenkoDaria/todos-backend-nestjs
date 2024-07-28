@@ -30,7 +30,6 @@ export class TodosController {
     @Delete(':id')
     async deleteTodo(@Param('id') id: string) {
         const isValid = mongoose.Types.ObjectId.isValid(id);
-        console.log("mongoose.Types", mongoose.Types);
         if (!isValid) throw new HttpException('Invalid ID', 400);
         const deleteTodo = await this.todosService.deleteTodo(id);
         if (!deleteTodo) throw new HttpException('The task Not Found', 404);
@@ -51,6 +50,9 @@ export class TodosController {
     }
     @Patch(':id')
     async updatedTodo(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto): Promise<Todo> {
+
+        console.log("updateTodoDto==>>>", updateTodoDto);
+
         const isValid = mongoose.Types.ObjectId.isValid(id);
         if (!isValid) {
             throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
