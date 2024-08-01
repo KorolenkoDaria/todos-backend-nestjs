@@ -17,15 +17,8 @@ export class TodosService {
     }
 
     async getsTodos(criteria: string, userId: string): Promise<Todo[]> {
-        console.log(criteria);
         const todos = await this.todoModel.find({ owner: userId }).sort({ [criteria]: 1 }).exec();
-        const result = todos.map(todo => {
-            return {
-                ...todo.toObject(),
-                priority: priorities[todo.priority]
-            };
-        });
-        return result;
+        return todos;
     }
 
     async deleteTodo(id: string) {
@@ -43,7 +36,7 @@ export class TodosService {
     async updateTodo(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo | null> {
         const todo = await this.todoModel.findOneAndUpdate(
             { _id: id },
-            { title: updateTodoDto.editTitle },
+            updateTodoDto,
             { new: true }
         ).exec();
         if (!todo) {

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Controller, Query, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import * as moment from 'moment-timezone';
 import { TodosService } from './todo.service';
 import { Todo } from '../schemas/todo.schema';
 import { CreateTodoDto } from './dto/CreateTodo.dto';
@@ -50,9 +51,6 @@ export class TodosController {
     }
     @Patch(':id')
     async updatedTodo(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto): Promise<Todo> {
-
-        console.log("updateTodoDto==>>>", updateTodoDto);
-
         const isValid = mongoose.Types.ObjectId.isValid(id);
         if (!isValid) {
             throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);

@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString, IsBoolean, } from "class-validator";
-import { IsCustomDateFormat } from "../validation/custom-date-format.decorator";
+import { IsNotEmpty, IsString, IsBoolean, IsNumber, IsDate } from "class-validator";
+import { Type } from 'class-transformer';
+import * as moment from 'moment-timezone';
 
 export class CreateTodoDto {
     @IsNotEmpty()
@@ -9,17 +10,15 @@ export class CreateTodoDto {
     @IsBoolean()
     completed: boolean;
 
-    @IsNotEmpty()
-    @IsString()
-    @IsCustomDateFormat('DD-MM-YYYY', { message: 'Date must be in the format DD-MM-YYYY' })
-    addDate: string;
+    @IsDate()
+    @Type(() => Date)
+    addDate: Date;
+
+    @IsDate()
+    @Type(() => Date)
+    updateDate: Date;
 
     @IsNotEmpty()
-    @IsString()
-    @IsCustomDateFormat('DD-MM-YYYY', { message: 'Date must be in the format DD-MM-YYYY' })
-    updateDate: string;
-
-    @IsNotEmpty()
-    @IsString()
-    priority: string;
+    @IsNumber()
+    priority: number;
 }

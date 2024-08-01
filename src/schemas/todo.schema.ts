@@ -13,14 +13,14 @@ export class Todo {
     @Prop({ default: false })
     completed: boolean;
 
-    @Prop({ required: true })
-    addDate: string;
+    @Prop({ required: true, type: Date })
+    addDate: Date;
 
-    @Prop({ required: true })
-    updateDate: string;
+    @Prop({ required: true, type: Date })
+    updateDate: Date;
 
-    @Prop({ enum: ["0", "1", "2", "3"] })
-    priority: string;
+    @Prop({ enum: [0, 1, 2, 3] })
+    priority: number;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     owner: User;

@@ -1,16 +1,15 @@
-import { IsNotEmpty, IsString } from "class-validator";
-import { IsCustomDateFormat } from "../validation/custom-date-format.decorator";
-
+import { IsNotEmpty, IsString, IsNumber, IsDate } from "class-validator";
+import { Transform } from 'class-transformer';
+import * as moment from 'moment-timezone';
 export class UpdateTodoDto {
     @IsNotEmpty()
     @IsString()
     editTitle: string;
 
-    @IsString()
-    priority: string;
+    @IsNumber()
+    priority: number;
 
-    @IsNotEmpty()
-    @IsString()
-    @IsCustomDateFormat('DD-MM-YYYY', { message: 'Date must be in the format DD-MM-YYYY' })
-    updateDate: string;
+    @Transform(({ value }) => moment.tz(value, 'DD-MM-YYYY', 'UTC').toDate())
+    @IsDate()
+    updateDate: Date;
 }
