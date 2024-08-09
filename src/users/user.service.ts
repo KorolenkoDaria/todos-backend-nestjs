@@ -28,8 +28,11 @@ export class UsersService {
 
         const payload = { sub: newUser._id, username: newUser.email };
         const token = await this.jwtService.signAsync(payload);
+        const refreshToken = await this.jwtService.signAsync(payload, {
+            expiresIn: '7d'
+        });
 
-        return await this.userModel.findOneAndUpdate(newUser._id, { token: token }, { new: true })
+        return await this.userModel.findOneAndUpdate(newUser._id, { refreshToken, token }, { new: true })
     }
 
     async login(authUserDto: AuthUserDto): Promise<User> {
@@ -47,14 +50,39 @@ export class UsersService {
         }
         const payload = { sub: isUser._id, username: isUser.email };
         const token = await this.jwtService.signAsync(payload);
+        const refreshToken = await this.jwtService.signAsync(payload, {
+            expiresIn: '7d',
+        });
 
-        return await this.userModel.findOneAndUpdate(isUser._id, { token: token }, { new: true })
+        return await this.userModel.findOneAndUpdate(
+            isUser._id,
+            { token, refreshToken },
+            { new: true }
+        );
     }
 
     async logout(logoutUserDto: LogoutUserDto): Promise<User> {
         const { email } = logoutUserDto
-        return await this.userModel.findOneAndUpdate({ email }, { token: "" }, { new: true });
+        return await this.userModel.findOneAndUpdate({ email }, { token: "", refreshToken: "" }, { new: true });
 
+    }
+
+    async refresh(refreshToken: string): Promise<{ token: string, refreshToken: string }> {
+        const payload = await this.jwtService.verifyAsync(refreshToken);
+        const user = await this.userModel.findById(payload.sub);
+
+        if (!user || user.refreshToken !== refreshToken) {
+            throw new HttpException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+        }
+
+        const newAccessToken = await this.jwtService.signAsync({ sub: user._id, username: user.email });
+        const newRefreshToken = await this.jwtService.signAsync({ sub: user._id, username: user.email }, {
+            expiresIn: '7d',
+        });
+
+        await this.userModel.findByIdAndUpdate(user._id, { token: newAccessToken, refreshToken: newRefreshToken });
+
+        return { token: newAccessToken, refreshToken: newRefreshToken };
     }
 
 }

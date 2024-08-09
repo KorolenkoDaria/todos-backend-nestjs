@@ -28,5 +28,11 @@ export class UsersController {
         return this.usersService.logout(logoutUserDto);
     }
 
+    @Post('refresh-token')
+    @UsePipes(new ValidationPipe)
+    async refreshToken(@Body() body: { refreshToken: string }) {
+        return this.usersService.refresh(body.refreshToken);
+    }
+
 
 }
