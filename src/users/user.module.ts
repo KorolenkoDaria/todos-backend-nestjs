@@ -16,7 +16,7 @@ const { SECRET_KEY } = process.env;
         JwtModule.register({
             global: true,
             secret: SECRET_KEY,
-            signOptions: { expiresIn: '6h' },
+            signOptions: { expiresIn: '1m' },
         }),
     ],
     providers: [UsersService],

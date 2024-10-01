@@ -67,24 +67,25 @@ export class UsersService {
 
     }
 
-    async refresh(refreshToken: string): Promise<{ token: string, refreshToken: string }> {
+    async refresh(refreshToken: string): Promise<{ refreshToken: string, token: string }> {
         const payload = await this.jwtService.verifyAsync(refreshToken);
         const user = await this.userModel.findById(payload.sub);
 
         if (!user || user.refreshToken !== refreshToken) {
             throw new HttpException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
-
         const newAccessToken = await this.jwtService.signAsync({ sub: user._id, username: user.email });
         const newRefreshToken = await this.jwtService.signAsync({ sub: user._id, username: user.email }, {
             expiresIn: '7d',
         });
 
-        await this.userModel.findByIdAndUpdate(user._id, { token: newAccessToken, refreshToken: newRefreshToken });
-
-        return { token: newAccessToken, refreshToken: newRefreshToken };
+        const refreshUser = await this.userModel.findByIdAndUpdate(user._id, { token: newAccessToken, refreshToken: newRefreshToken }, { new: true });
+        return { refreshToken: newRefreshToken, token: newAccessToken };
     }
 
+    async getUser(userId: string): Promise<User> {
+        return await this.userModel.findById(userId);
+    }
 }
 
 

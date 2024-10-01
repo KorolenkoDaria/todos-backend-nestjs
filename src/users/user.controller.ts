@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Patch, Body, UsePipes, ValidationPipe, UseGuards, Request, HttpStatus } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { User } from '../schemas/user.schema';
 import { AuthUserDto } from './dto/AuthUser.dto';
 import { LogoutUserDto } from './dto/LogoutUser.dto';
-/* import { AuthGuard } from './user.guard'; */
+import { AuthGuard } from './user.guard';
 
 @Controller('auth')
 export class UsersController {
@@ -34,5 +34,12 @@ export class UsersController {
         return this.usersService.refresh(body.refreshToken);
     }
 
+    @Get('fetch-user')
+    @UseGuards(AuthGuard)
+    async fetchUser(@Request() req) {
+        const userId = req.user.sub;
+        const user = await this.usersService.getUser(userId);
+        return user
+    }
 
 }
