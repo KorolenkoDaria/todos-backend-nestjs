@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, IsNumber, IsDate } from "class-validator";
-import { Transform } from 'class-transformer';
-import * as moment from 'moment-timezone';
+import { Type } from 'class-transformer';
+/* import { Transform } from 'class-transformer';
+import * as moment from 'moment-timezone'; */
 export class UpdateTodoDto {
     @IsNotEmpty()
     @IsString()
@@ -9,7 +10,7 @@ export class UpdateTodoDto {
     @IsNumber()
     priority: number;
 
-    @Transform(({ value }) => moment.tz(value, 'DD-MM-YYYY', 'UTC').toDate())
     @IsDate()
+    @Type(() => Date)
     updateDate: Date;
 }

@@ -34,9 +34,10 @@ export class TodosService {
         return todo.save();
     }
     async updateTodo(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo | null> {
+        const { editTitle: title, priority, updateDate } = updateTodoDto
         const todo = await this.todoModel.findOneAndUpdate(
             { _id: id },
-            updateTodoDto,
+            { title, priority, updateDate },
             { new: true }
         ).exec();
         if (!todo) {
